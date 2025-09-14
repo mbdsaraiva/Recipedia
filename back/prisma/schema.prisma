@@ -13,3 +13,52 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User{
+  id Int @id @default(autoincrement())
+  nome String
+  email String
+  senha String
+  tipo String
+  receitas Recipe[]
+  estoque UserIngredient[]
+}
+
+model Ingredient {
+  id       Int    @id @default(autoincrement())
+  nome     String
+  unidade  String
+  receitas RecipeIngredient[]
+  estoque  UserIngredient[]
+}
+
+model UserIngredient {
+  user       User       @relation(fields: [userId], references: [id])
+  userId     Int
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+  quantidade Float
+  validade   DateTime
+
+  @@id([userId, ingredientId]) // chave composta
+}
+
+model Recipe {
+  id        Int    @id @default(autoincrement())
+  nome      String
+  instrucoes String
+  categoria String
+  autor     User?  @relation(fields: [autorId], references: [id])
+  autorId   Int?
+  ingredientes RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  recipe     Recipe     @relation(fields: [recipeId], references: [id])
+  recipeId   Int
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+  quantidade Float
+
+  @@id([recipeId, ingredientId]) // chave composta
+}
