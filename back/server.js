@@ -8,6 +8,8 @@ const prisma = new PrismaClient;
 app.use(cors());
 app.use(express.json());
 
+// USERS ALL
+
 app.get('/api/users', async(req,res) => {
     try{
         const users = await prisma.user.findMany();
@@ -31,6 +33,38 @@ app.post('/api/users', async(req,res) => {
     }
 });
 
+// USERS ID
+
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(id) }, 
+      include: {
+        receitas: true,    
+        estoque: {         
+          include: {
+            ingredient: true 
+          }
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('Erro:', error);
+    res.status(500).json({ error: 'Erro ao buscar usuário' });
+  }
+});
+
+
+
+
+//INGREDIENTS ALL
 app.get('/api/ingredients', async(req,res)=>{
     try{
         const ingredients = await prisma.ingredient.findMany();
