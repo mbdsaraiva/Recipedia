@@ -61,8 +61,47 @@ app.get('/api/users/:id', async (req, res) => {
   }
 });
 
+app.put('/api/users/:id', async(req,res)=> {
+    try{
+        const {id} = req.params;
+        const {nome, email, senha, tipo} = req.body;
+        
+        //verificando se o usuario existe
+        const userExists = await prisma.user.findUnique({
+            where: {id: parseInt(id)}
+        });
+        
+        if (!userExists){
+            return res.status(404).json({error: "Usuario nao encontrado"});
+        }
+        
+        const updateData = {};
+        if (nome) updateData.nome = nome;
+        if(email) updateData.email = email;
+        if(senha) updateData.senha = senha;
+        if (tipo) updateData.tipo = tipo;
 
+        const user = await prisma.user.update({
 
+            where:{id: parseInt(id)},
+            data: updateData
+        });
+
+        res.json({
+            message: 'Usuario atualizado com sucesso',
+            user
+        });
+
+    }catch(error){
+
+        console.log('Error: ',error);
+        if (error.code === 'P2002'){
+            res.status(400).json({error: 'Email ja esta em uso'});
+        }else{
+            res.status(500).json({error: 'Erro ao atualizar o usuario'});
+        }
+    }
+});
 
 //INGREDIENTS ALL
 app.get('/api/ingredients', async(req,res)=>{
