@@ -8,6 +8,9 @@ const prisma = new PrismaClient;
 app.use(cors());
 app.use(express.json());
 
+
+/* NECESSARIO REFATORAR*/ 
+
 // USERS ALL
 
 app.get('/api/users', async(req,res) => {
@@ -125,6 +128,27 @@ app.delete('/api/users/:id', async(req,res)=> {
     }
 });
 
+//endpoint para retornar as receitas de um usuario especifico
+app.get('/api/users/:id/recipes', async(req,res)=> {
+    try{
+        const {id} = req.params;
+        const recipes = await prisma.recipe.findMany({
+            where: {autorId: parseInt(id)},
+            include: {
+                ingredientes:{
+                    include:{
+                        ingredient: true
+                    }
+                }
+            }
+        });
+        res.json(recipes);
+    }
+    catch(error){
+        console.error('Error', error);
+        res.status(500).json({error: 'Erro ao buscar receitas do usuario'});
+    }     
+})
 
 //INGREDIENTS ALL
 app.get('/api/ingredients', async(req,res)=>{
