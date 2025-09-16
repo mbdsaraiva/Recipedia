@@ -8,13 +8,6 @@ const prisma = new PrismaClient;
 app.use(cors());
 app.use(express.json());
 
-// app.get('/', (req,res) => {
-//     res.json({
-//         message: "API recipedia funcionando!",
-//         timestamp: new Date().toISOString
-//     });
-// })
-
 app.get('/api/users', async(req,res) => {
     try{
         const users = await prisma.user.findMany();
@@ -35,6 +28,16 @@ app.post('/api/users', async(req,res) => {
     }
     catch (error) {
         res.status(500).json({erro: 'Erro ao criar usuário'});
+    }
+});
+
+app.get('/api/ingredients', async(req,res)=>{
+    try{
+        const ingredients = await prisma.ingredient.findMany();
+        res.json(ingredients);
+    }
+    catch(error){
+        res.status(500).json({error: 'Erro ao buscar o ingrediente'})
     }
 });
 
