@@ -42,6 +42,7 @@ async function getUserById(req, res) {
 
 }
 
+// criar usuario
 async function createUser(req, res) {
     try {
         const { nome, email, senha, tipo } = req.body;
@@ -74,6 +75,7 @@ async function createUser(req, res) {
     }
 }
 
+// atualizar usuario
 async function updateUser(req, res) {
     try {
         const { id } = req.params;
@@ -115,6 +117,7 @@ async function updateUser(req, res) {
     }
 }
 
+// deletar usuario
 async function deleteUser(req, res) {
     try {
 
@@ -140,6 +143,7 @@ async function deleteUser(req, res) {
     }
 }
 
+// buscar receitas de um usuario
 async function getUserRecipes(req, res) {
     try {
         const { id } = req.params;
