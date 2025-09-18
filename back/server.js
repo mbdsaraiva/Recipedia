@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 
-/* NECESSARIO REFATORAR*/ 
+/* falta server.js refatorar*/ 
 
 // USERS ALL
 
