@@ -11,7 +11,7 @@ app.use(express.json());
 
 /* falta server.js refatorar*/ 
 
-// USERS ALL
+
 
 app.get('/api/users', async(req,res) => {
     try{
@@ -36,7 +36,6 @@ app.post('/api/users', async(req,res) => {
     }
 });
 
-// USERS ID
 
 app.get('/api/users/:id', async (req, res) => {
   try {
@@ -128,7 +127,6 @@ app.delete('/api/users/:id', async(req,res)=> {
     }
 });
 
-//endpoint para retornar as receitas de um usuario especifico
 app.get('/api/users/:id/recipes', async(req,res)=> {
     try{
         const {id} = req.params;
@@ -150,7 +148,6 @@ app.get('/api/users/:id/recipes', async(req,res)=> {
     }     
 })
 
-//INGREDIENTS ALL
 app.get('/api/ingredients', async(req,res)=>{
     try{
         const ingredients = await prisma.ingredient.findMany();
