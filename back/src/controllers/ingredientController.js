@@ -268,6 +268,8 @@ async function getIngredientStats(){
         const stats = await prisma.$transaction([
 
             prisma.ingredient.count(),
+
+            //  retornando ingrediente mais usado nas receitas
             prisma.ingredient.findMany({
                 include: {
                     _count:{
@@ -281,6 +283,7 @@ async function getIngredientStats(){
                 }
             }),
 
+            // retornando o ingrediente mais comum nos estoques
             prisma.ingredient.findFirst({
                 include: {
                     _count:{
