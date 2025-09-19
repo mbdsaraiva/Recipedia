@@ -168,3 +168,52 @@ async function updateIngredient(req, res) {
         res.status(500).json({ error: 'Erro ao atualizar ingrediente' });
     }
 }
+
+// deletar ingrediente
+async function deleteIngredient(req, res) {
+    try {
+        const { id } = req.params;
+
+        const ingredient = await prisma.ingredient.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+                _count: {
+                    select: {
+                        receitas: true,
+                        estoque: true
+                    }
+                }
+            }
+        });
+
+
+        if (!ingredient) {
+            return res.status(404).json({ error: 'Ingrediente não encontrado' });
+        }
+
+
+        if (ingredient._count.receitas > 0 || ingredient._count.estoque > 0) {
+            return res.status(409).json({
+                error: 'Não é possível deletar: ingrediente está sendo usado',
+                usage: {
+                    receitas: ingredient._count.receitas,
+                    estoque: ingredient._count.estoque
+                }
+            });
+        }
+
+        await prisma.ingredient.delete({
+            where: { id: parseInt(id) }
+        });
+
+
+        res.json({ 
+            message: 'Ingrediente deletado',
+            deleted: ingredient.nome 
+        });
+    } catch (error) {
+        console.error('Erro ao deletar:', error);
+        res.status(500).json({ error: 'Erro ao deletar' });
+    }
+    
+}
