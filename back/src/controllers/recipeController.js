@@ -74,7 +74,7 @@ async function getRecipeById(req, res) {
         });
 
         if (!recipe) {
-            return res.status(404).json({ error: 'Receita não encontrada' });
+            return res.status(404).json({ error: 'Receita nao encontrada' });
         }
 
         res.json(recipe);
@@ -91,7 +91,7 @@ async function createRecipe(req, res) {
         // validação básica
         if (!nome || !instrucoes || !categoria || !autorId || !ingredientes || ingredientes.length === 0) {
             return res.status(400).json({
-                error: 'Nome, instruções, categoria, autor e pelo menos 1 ingrediente são obrigatórios'
+                error: 'Nome, instruçoes, categoria, autor e pelo menos 1 ingrediente sao obrigatorios'
             });
         }
 
@@ -101,7 +101,7 @@ async function createRecipe(req, res) {
         });
 
         if (!autor) {
-            return res.status(404).json({ error: 'Autor não encontrado' });
+            return res.status(404).json({ error: 'Autor nao encontrado' });
         }
 
         // verificar se todos os ingredientes existem
@@ -112,7 +112,7 @@ async function createRecipe(req, res) {
 
         if (existingIngredients.length !== ingredientIds.length) {
             return res.status(400).json({
-                error: 'Um ou mais ingredientes não foram encontrados'
+                error: 'Um ou mais ingredientes nao foram encontrados'
             });
         }
 
@@ -120,7 +120,7 @@ async function createRecipe(req, res) {
         for (let ing of ingredientes) {
             if (!ing.ingredientId || !ing.quantidade || ing.quantidade <= 0) {
                 return res.status(400).json({
-                    error: 'Todos os ingredientes devem ter ID e quantidade válidos'
+                    error: 'Todos os ingredientes devem ter ID e quantidade validos'
                 });
             }
         }
@@ -190,7 +190,7 @@ async function updateRecipe(req, res) {
         });
 
         if (!recipe) {
-            return res.status(404).json({ error: 'Receita não encontrada' });
+            return res.status(404).json({ error: 'Receita nao encontrada' });
         }
 
         const updatedRecipe = await prisma.$transaction(async (tx) => {
@@ -256,10 +256,42 @@ async function updateRecipe(req, res) {
         });
     } catch (error) {
         console.error('Erro ao atualizar receita:', error);
-        if (error.message === 'Ingrediente não encontrado') {
-            res.status(400).json({ error: 'Um ou mais ingredientes não foram encontrados' });
+        if (error.message === 'Ingrediente nao encontrado') {
+            res.status(400).json({ error: 'Um ou mais ingredientes nao foram encontrados' });
         } else {
             res.status(500).json({ error: 'Erro ao atualizar receita' });
         }
     }
+}
+
+async function deleteRecipe(req,res){
+
+    try{
+        const {id} = req.params;
+
+        const recipe = await prisma.recipe.findUnique({
+
+            where: {id: parseInt(id)},
+            select: {id: true, nome: true}
+        });
+
+        if(!recipe){
+            return res.status(404).json({
+                error: 'Receita nao encontrada'
+            })
+        }
+
+        await prisma.recipe.delete({
+            where: {id:parseInt(id)}
+        });
+
+        res.json({
+            message: 'Receita deletada com sucesso',
+            deleted: recipe.nome
+        });
+    } catch (error){
+        console.error('Erro ao deletar receita:', error);
+        res.status(500).json({error: 'Erro ao deletar receita'});
+    }
+
 }
