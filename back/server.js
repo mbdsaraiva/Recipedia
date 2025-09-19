@@ -17,6 +17,7 @@ const {connectDatabase, disconnectDatabase} = require('./src/config/database');
 // importacao das rotas
 const userRoutes = require('./src/routes/userRoutes');
 const ingredientRoutes = require('./src/routes/ingredientRoutes');
+const recipeRoutes = require('./src/routes/recipeRoutes');
 
 const app = express();
 
@@ -43,6 +44,8 @@ app.get('/', (req,res)=> {
 
 app.use('/api/users', userRoutes);
 app.use('/api/ingredients', ingredientRoutes);
+app.use('/api/recipes', recipeRoutes);
+
 // caso a rota nao seja encontrada
 app.use(/.*/, (req,res)=> {
   res.status(404).json({
