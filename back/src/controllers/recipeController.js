@@ -175,6 +175,7 @@ async function createRecipe(req, res) {
     }
 }
 
+// atualizar receitas
 async function updateRecipe(req, res) {
     try {
         const { id } = req.params;
@@ -264,6 +265,7 @@ async function updateRecipe(req, res) {
     }
 }
 
+// deletar uma receita
 async function deleteRecipe(req,res){
 
     try{
@@ -296,6 +298,8 @@ async function deleteRecipe(req,res){
 
 }
 
+
+// retornar receias por categoria
 async function getRecipesByCategory(req,res){
     try{
         const {categoria} = req.params;
@@ -325,5 +329,61 @@ async function getRecipesByCategory(req,res){
     } catch(error){
         console.error('Erro ao buscar receitas por categoria:', error);
         res.status(500).json({error: 'Erro ao buscar receitas'})
+    }
+}
+
+async function getRecipesUserCanMake(req, res) {
+    try {
+        const { userId } = req.params;
+
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(userId) }
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario nao encontrado' });
+        }
+
+        // buscando estoque do usuario
+        const userStock = await prisma.userIngredient.findMany({
+            where: { userId: parseInt(userId) },
+            include: { ingredient: true }
+        });
+
+        // buscar todas as receitas
+        const allRecipes = await prisma.recipe.findMany({
+            include: {
+                autor: {
+                    select: { id: true, nome: true }
+                },
+                ingredientes: {
+                    include: {
+                        ingredient: true
+                    }
+                }
+            }
+        });
+
+        // filtrando receitas possiveis
+        const canMakeRecipes = allRecipes.filter(recipe => {
+            return recipe.ingredientes.every(recipeIng => {
+                const userHas = userStock.find(stock => 
+                    stock.ingredientId === recipeIng.ingredientId && 
+                    stock.quantidade >= recipeIng.quantidade
+                );
+                return userHas !== undefined;
+            });
+        });
+
+        res.json({
+            userId: parseInt(userId),
+            userName: user.nome,
+            totalRecipes: allRecipes.length,
+            canMake: canMakeRecipes.length,
+            recipes: canMakeRecipes
+        });
+    } catch (error) {
+        console.error('Erro ao buscar receitas possíveis:', error);
+        res.status(500).json({ error: 'Erro ao buscar receitas' });
     }
 }
