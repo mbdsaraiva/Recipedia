@@ -295,3 +295,35 @@ async function deleteRecipe(req,res){
     }
 
 }
+
+async function getRecipesByCategory(req,res){
+    try{
+        const {categoria} = req.params;
+
+        const recipes = await prisma.recipe.findMany({
+            where: {
+                categoria: {
+                    equals: categoria,
+                    mode: 'insensitive'
+                }
+            },
+            include: {
+                autor: {
+                    select: {id: true, nome: true}
+                },
+                _count:{
+                    select: {ingredientes: true}
+                }
+            },
+            orderBy: {nome: 'asc'}
+        });
+        res.json({
+            categoria,
+            total: recipes.length,
+            recipes
+        });
+    } catch(error){
+        console.error('Erro ao buscar receitas por categoria:', error);
+        res.status(500).json({error: 'Erro ao buscar receitas'})
+    }
+}
