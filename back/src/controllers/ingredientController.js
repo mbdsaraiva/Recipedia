@@ -76,3 +76,42 @@ async function getIngredientById(req, res) {
         res.status(500).json({ error: 'Erro ao buscar ingrediente' });
     }
 }
+
+// criar novo ingrediente
+async function createIngredient(req,res) {
+    try{
+        const{nome, unidade} = req.body;
+
+        if(!nome || !unidade){
+            return res.status(400).json({error: 'Nome e unidade sao obrigatorios'});
+        }
+
+        const existingIngredient = await prisma.ingredient.findFirst({
+            where: {
+                nome: {
+                    equals: nome,
+                    mode: 'insensitive'
+                }
+            }
+        });
+
+        if(!existingIngredient){
+            return res.status(409).json({
+                error: 'Ingrediente com nome ja cadastrado',
+                existing: existingIngredient
+            });
+        }
+
+        const ingredient = await prisma.ingredient.create({
+            data: {
+                nome: nome.trim(),
+                unidade: unidade.toLowerCase().trim()
+            }
+        });
+
+        res.status(201).json({message: 'Ingrediente adicionado', ingredient});
+    } catch(error){
+        console.error('Erro ao adicionar:', error);
+        res.status(500).json({error: 'Erro ao criar ingrediente'});
+    }
+}
