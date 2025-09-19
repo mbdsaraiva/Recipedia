@@ -174,3 +174,92 @@ async function createRecipe(req, res) {
         res.status(500).json({ error: 'Erro ao criar receita' });
     }
 }
+
+async function updateRecipe(req, res) {
+    try {
+        const { id } = req.params;
+        const { nome, instrucoes, categoria, ingredientes } = req.body;
+
+        // verificar se receita existe
+        const recipe = await prisma.recipe.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+                autor: true,
+                ingredientes: true
+            }
+        });
+
+        if (!recipe) {
+            return res.status(404).json({ error: 'Receita não encontrada' });
+        }
+
+        const updatedRecipe = await prisma.$transaction(async (tx) => {
+            // atualizar dados básicos da receita
+            const updateData = {};
+            if (nome) updateData.nome = nome.trim();
+            if (instrucoes) updateData.instrucoes = instrucoes.trim();
+            if (categoria) updateData.categoria = categoria.trim();
+
+            const updated = await tx.recipe.update({
+                where: { id: parseInt(id) },
+                data: updateData
+            });
+
+            // se ingredientes foram enviados, atualizar
+            if (ingredientes && Array.isArray(ingredientes)) {
+                await tx.recipeIngredient.deleteMany({
+                    where: { recipeId: parseInt(id) }
+                });
+
+                if (ingredientes.length > 0) {
+                    const ingredientIds = ingredientes.map(ing => ing.ingredientId);
+                    const existingIngredients = await tx.ingredient.findMany({
+                        where: { id: { in: ingredientIds } }
+                    });
+
+                    if (existingIngredients.length !== ingredientIds.length) {
+                        throw new Error('Ingrediente não encontrado');
+                    }
+
+                    const recipeIngredients = ingredientes.map(ing => ({
+                        recipeId: parseInt(id),
+                        ingredientId: parseInt(ing.ingredientId),
+                        quantidade: parseFloat(ing.quantidade)
+                    }));
+
+                    await tx.recipeIngredient.createMany({
+                        data: recipeIngredients
+                    });
+                }
+            }
+
+            return updated;
+        });
+
+        const fullRecipe = await prisma.recipe.findUnique({
+            where: { id: parseInt(id) },
+            include: {
+                autor: {
+                    select: { id: true, nome: true }
+                },
+                ingredientes: {
+                    include: {
+                        ingredient: true
+                    }
+                }
+            }
+        });
+
+        res.json({
+            message: 'Receita atualizada com sucesso',
+            recipe: fullRecipe
+        });
+    } catch (error) {
+        console.error('Erro ao atualizar receita:', error);
+        if (error.message === 'Ingrediente não encontrado') {
+            res.status(400).json({ error: 'Um ou mais ingredientes não foram encontrados' });
+        } else {
+            res.status(500).json({ error: 'Erro ao atualizar receita' });
+        }
+    }
+}
