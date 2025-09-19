@@ -263,7 +263,7 @@ async function searchIngredients(req,res){
 
 // estatisticas dos ingredientes
 
-async function getIngredientStats(){
+async function getIngredientStats(req,res){
     try{
         const stats = await prisma.$transaction([
 

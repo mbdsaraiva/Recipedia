@@ -2,11 +2,13 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+
 /* por fazer:
-    -recipes
-    -personal
-    -smart recipes
-*/ 
+    receitas
+    estoque pessoal
+    funcionalidades inteligentes
+    
+    */
 
 
 // conexcao com o db
