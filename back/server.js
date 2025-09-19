@@ -2,6 +2,13 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+/* por fazer:
+    -recipes
+    -personal
+    -smart recipes
+*/ 
+
+
 // conexcao com o db
 const {connectDatabase, disconnectDatabase} = require('./src/config/database');
 
