@@ -259,3 +259,59 @@ async function searchIngredients(req,res){
         res.status(500).json({error: 'Erro ao buscar'})
     }
 }
+
+
+// estatisticas dos ingredientes
+
+async function getIngredientStats(){
+    try{
+        const stats = await prisma.$transaction([
+
+            prisma.ingredient.count(),
+            prisma.ingredient.findMany({
+                include: {
+                    _count:{
+                        select: {receitas: true}
+                    }
+                },
+                orderBy: {
+                    receitas: {
+                        _count: 'desc'
+                    }
+                }
+            }),
+
+            prisma.ingredient.findFirst({
+                include: {
+                    _count:{
+                        select: {estoque: true}
+                    }
+                },
+                orderBy: {
+                    estoque: {
+                        _count: 'desc'
+                    }
+                }
+            })
+        ]);
+
+        res.json({
+            totalIngredients: stats[0],
+            mostUsedInRecipes: stats[1],
+            mostCommonInStock: stats[2]  
+        });
+    }catch (error) {
+        console.error('Erro ao buscar dados', error);
+        res.stats(500).json({error: 'Erro ao buscar dados'});
+    }
+}
+
+module.exports = {
+    getAllIngredients,
+    getIngredientById,
+    createIngredient,
+    updateIngredient,
+    deleteIngredient,
+    searchIngredients,
+    getIngredientStats
+};
