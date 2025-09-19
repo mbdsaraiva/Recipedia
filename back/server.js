@@ -1,169 +1,70 @@
 const express = require('express');
 const cors = require('cors');
-const { PrismaClient } = require ('./generated/prisma');
+require('dotenv').config();
+
+const {connectDatabase, disconnectDatabase} = require('./src/config/database');
+
+const userRoutes = require('./src/routes/userRoutes');
 
 const app = express();
-const prisma = new PrismaClient;
 
 app.use(cors());
 app.use(express.json());
 
+app.use((req,res,next)=> {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+})
 
-/* falta server.js refatorar*/ 
-
-
-
-app.get('/api/users', async(req,res) => {
-    try{
-        const users = await prisma.user.findMany();
-        res.json(users);
-    }
-    catch (error) {
-        res.status(500).json({error: "Erro ao buscar usuários"});
-    }
-});
-
-app.post('/api/users', async(req,res) => {
-    try{
-        const {nome, email, senha, tipo} = req.body;
-        const user = await prisma.user.create({
-            data: {nome, email, senha, tipo}
-        })
-        res.status(201).json(user);
-    }
-    catch (error) {
-        res.status(500).json({erro: 'Erro ao criar usuário'});
-    }
-});
-
-
-app.get('/api/users/:id', async (req, res) => {
-  try {
-    const { id } = req.params; 
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) }, 
-      include: {
-        receitas: true,    
-        estoque: {         
-          include: {
-            ingredient: true 
-          }
+// rota de teste
+app.get('/', (req,res)=> {
+    res.json({
+        message: 'Api rodando',
+        timestamp: new Date().toISOString(),
+        endpoints: {
+            users: '/api/users',
+            ingredients: '/api/ingredients',
+            recipes: '/api/recipes'
         }
-      }
     });
-
-    if (!user) {
-      return res.status(404).json({ error: 'Usuário não encontrado' });
-    }
-
-    res.json(user);
-  } catch (error) {
-    console.error('Erro:', error);
-    res.status(500).json({ error: 'Erro ao buscar usuário' });
-  }
 });
 
-app.put('/api/users/:id', async(req,res)=> {
-    try{
-        const {id} = req.params;
-        const {nome, email, senha, tipo} = req.body;
-        
-        //verificando se o usuario existe
-        const userExists = await prisma.user.findUnique({
-            where: {id: parseInt(id)}
-        });
-        
-        if (!userExists){
-            return res.status(404).json({error: "Usuario nao encontrado"});
-        }
-        
-        const updateData = {};
-        if (nome) updateData.nome = nome;
-        if(email) updateData.email = email;
-        if(senha) updateData.senha = senha;
-        if (tipo) updateData.tipo = tipo;
+app.use('/api/users', userRoutes);
 
-        const user = await prisma.user.update({
-
-            where:{id: parseInt(id)},
-            data: updateData
-        });
-
-        res.json({
-            message: 'Usuario atualizado com sucesso',
-            user
-        });
-
-    }catch(error){
-
-        console.log('Error: ',error);
-        if (error.code === 'P2002'){
-            res.status(400).json({error: 'Email ja esta em uso'});
-        }else{
-            res.status(500).json({error: 'Erro ao atualizar o usuario'});
-        }
-    }
+// caso a rota nao seja encontrada
+app.use(/.*/, (req,res)=> {
+  res.status(404).json({
+    error: 'Rota nao encontrada',
+    path: req.originalUrl
+  });
 });
 
-app.delete('/api/users/:id', async(req,res)=> {
-    try{
-        const {id} = req.params;
-        const userExists = await prisma.user.findUnique({
-            where: {id: parseInt(id)}
-        });
 
-        if(!userExists){
-            res.status(404).json({error: 'Usuario nao encontrado'})
-        }
 
-        await prisma.user.delete({
-            where: {id: parseInt(id)}
-        });
-        
-        res.json({message: 'Usuario deletado com sucesso'})
-    }   catch (error){
-        console.error('error:', error);
-        res.status(500).json({error: 'Erro ao deletar o usuario'});
-    }
-});
-
-app.get('/api/users/:id/recipes', async(req,res)=> {
-    try{
-        const {id} = req.params;
-        const recipes = await prisma.recipe.findMany({
-            where: {autorId: parseInt(id)},
-            include: {
-                ingredientes:{
-                    include:{
-                        ingredient: true
-                    }
-                }
-            }
-        });
-        res.json(recipes);
-    }
-    catch(error){
-        console.error('Error', error);
-        res.status(500).json({error: 'Erro ao buscar receitas do usuario'});
-    }     
-})
-
-app.get('/api/ingredients', async(req,res)=>{
-    try{
-        const ingredients = await prisma.ingredient.findMany();
-        res.json(ingredients);
-    }
-    catch(error){
-        res.status(500).json({error: 'Erro ao buscar o ingrediente'})
-    }
-});
-
+// para iniciar o servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, ()=>{
-    console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`Acesse: http://localhost:${PORT}`);
-});
 
-process.on('beforeExit', async()=>{
-    await prisma.$disconnect();
+async function startServer(){
+    try{
+        await connectDatabase();
+
+        app.listen(PORT, ()=> {
+            console.log(`Servidor rodando na porta ${PORT}`);
+            console.log(`Acesse: http://localhost:${PORT}`);
+            console.log(`API Users na rota: http://localhost:${PORT}/api/users`);
+        });
+    } catch(error){
+        console.error('Erro ao iniciar servidor', error);
+        process.exit(1);
+    }
+}
+
+// tratamento para fechamento da aplicacao
+process.on('SIGINT', async()=> {
+    console.log('\n Encerrando o servidor');
+    await disconnectDatabase();
+    process.exit(0);
 })
+
+startServer();
+

@@ -33,13 +33,11 @@ async function getUserById(req, res) {
         }
 
         res.json(user);
-
     }
     catch (error) {
         console.error('Erro ao buscar usuario', error);
         res.status(500).json({ error: 'Erro ao buscar usuario' });
     }
-
 }
 
 // criar usuario
@@ -58,7 +56,7 @@ async function createUser(req, res) {
         });
 
         res.status(201).json({
-            message: 'Usuario nao encontrado',
+            message: 'Usuario criado com sucesso',
             user
         });
     }
@@ -68,7 +66,6 @@ async function createUser(req, res) {
             res.status(400).json({
                 error: 'Email ja em uso'
             })
-
         } else {
             res.status(500).json({ error: 'Erro ao criar o usuario' });
         }
@@ -90,7 +87,6 @@ async function updateUser(req, res) {
         }
 
         const updateData = {};
-
         if (nome) updateData.nome = nome;
         if (email) updateData.email = email;
         if (senha) updateData.senha = senha;
@@ -102,7 +98,7 @@ async function updateUser(req, res) {
         });
 
         res.json({
-            message: 'Usuario atualiado com sucesso',
+            message: 'Usuario atualizado com sucesso',
             user
         });
     } catch (error) {
@@ -120,7 +116,6 @@ async function updateUser(req, res) {
 // deletar usuario
 async function deleteUser(req, res) {
     try {
-
         const { id } = req.params;
 
         const userExists = await prisma.user.findUnique({
@@ -128,7 +123,7 @@ async function deleteUser(req, res) {
         });
 
         if (!userExists) {
-            res.status(400).json({ error: 'Usuario nao encontrado' })
+            return res.status(404).json({ error: 'Usuario nao encontrado' });
         }
 
         await prisma.user.delete({
@@ -149,7 +144,7 @@ async function getUserRecipes(req, res) {
         const { id } = req.params;
 
         const recipes = await prisma.recipe.findMany({
-            where: { id: parseInt(id) },
+            where: { autorId: parseInt(id) },
             include: {
                 ingredientes: {
                     include: {
