@@ -27,7 +27,7 @@ async function getAllIngredients(req,res){
 // busca por id
 async function getIngredientById(req, res) {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         const ingredient = await prisma.ingredient.findUnique({
             where: { id: parseInt(id) },
             include: {
@@ -119,8 +119,8 @@ async function createIngredient(req,res) {
 // atualizar ingrediente
 async function updateIngredient(req, res) {
     try {
-        const { id } = req.params;
-        const { nome, unidade } = req.body;
+        const {id} = req.params;
+        const {nome, unidade} = req.body;
 
         const ingredientExists = await prisma.ingredient.findUnique({
             where: { id: parseInt(id) }
@@ -172,7 +172,7 @@ async function updateIngredient(req, res) {
 // deletar ingrediente
 async function deleteIngredient(req, res) {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
 
         const ingredient = await prisma.ingredient.findUnique({
             where: { id: parseInt(id) },
@@ -215,5 +215,47 @@ async function deleteIngredient(req, res) {
         console.error('Erro ao deletar:', error);
         res.status(500).json({ error: 'Erro ao deletar' });
     }
-    
+
+}
+
+async function searchIngredients(req,res){
+    try{
+
+        const {q} = req.query;
+
+        if(!q || q.length < 2){
+            return res.status(400).json({error: 'a query deve ter 2 caracteres'});
+        }
+
+        const ingredients = await prisma.ingredient.findMany({
+            where: {
+                nome: {
+                    contains: q,
+                    mode: 'insensitive'
+                }
+            },
+            include: {
+                _count: {
+                    select: {
+                        receitas: true,
+                        estoque: true
+                    }
+                }
+            },
+            orderBy: {
+                nome: 'asc'
+            },
+            take: 20
+
+        });
+
+        res.json({
+            query: q,
+            results: ingredients.length,
+            ingredients
+        });
+    } catch (error){
+        console.error('Error ao buscar ingredientes', error);
+        res.status(500).json({error: 'Erro ao buscar'})
+    }
 }
