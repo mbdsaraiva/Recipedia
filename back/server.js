@@ -2,9 +2,12 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+// conexcao com o db
 const {connectDatabase, disconnectDatabase} = require('./src/config/database');
 
+// importacao das rotas
 const userRoutes = require('./src/routes/userRoutes');
+const ingredientRoutes = require('./src/routes/ingredientRoutes');
 
 const app = express();
 
@@ -30,7 +33,7 @@ app.get('/', (req,res)=> {
 });
 
 app.use('/api/users', userRoutes);
-
+app.use('/api/ingredients', ingredientRoutes);
 // caso a rota nao seja encontrada
 app.use(/.*/, (req,res)=> {
   res.status(404).json({

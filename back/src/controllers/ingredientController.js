@@ -95,7 +95,7 @@ async function createIngredient(req,res) {
             }
         });
 
-        if(!existingIngredient){
+        if(existingIngredient){
             return res.status(409).json({
                 error: 'Ingrediente com nome ja cadastrado',
                 existing: existingIngredient
