@@ -387,3 +387,12 @@ async function getRecipesUserCanMake(req, res) {
         res.status(500).json({ error: 'Erro ao buscar receitas' });
     }
 }
+module.exports = {
+    getAllRecipes,
+    getRecipeById,
+    createRecipe,
+    updateRecipe,
+    deleteRecipe,
+    getRecipesByCategory,
+    getRecipesUserCanMake
+};
