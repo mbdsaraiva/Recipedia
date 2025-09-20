@@ -398,5 +398,6 @@ module.exports = {
     addToStock,
     updateStockItem,
     removeFromStock,
-    consumeIngredient
+    consumeIngredient,
+    getExpiringItems
 };
