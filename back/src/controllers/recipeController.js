@@ -265,40 +265,6 @@ async function updateRecipe(req, res) {
     }
 }
 
-// deletar uma receita
-async function deleteRecipe(req,res){
-
-    try{
-        const {id} = req.params;
-
-        const recipe = await prisma.recipe.findUnique({
-
-            where: {id: parseInt(id)},
-            select: {id: true, nome: true}
-        });
-
-        if(!recipe){
-            return res.status(404).json({
-                error: 'Receita nao encontrada'
-            })
-        }
-
-        await prisma.recipe.delete({
-            where: {id:parseInt(id)}
-        });
-
-        res.json({
-            message: 'Receita deletada com sucesso',
-            deleted: recipe.nome
-        });
-    } catch (error){
-        console.error('Erro ao deletar receita:', error);
-        res.status(500).json({error: 'Erro ao deletar receita'});
-    }
-
-}
-
-
 // retornar receias por categoria
 async function getRecipesByCategory(req,res){
     try{
@@ -392,7 +358,6 @@ module.exports = {
     getRecipeById,
     createRecipe,
     updateRecipe,
-    deleteRecipe,
     getRecipesByCategory,
     getRecipesUserCanMake
 };
