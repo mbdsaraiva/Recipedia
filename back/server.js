@@ -18,6 +18,7 @@ const {connectDatabase, disconnectDatabase} = require('./src/config/database');
 const userRoutes = require('./src/routes/userRoutes');
 const ingredientRoutes = require('./src/routes/ingredientRoutes');
 const recipeRoutes = require('./src/routes/recipeRoutes');
+const stockRoutes = require('./src/routes/stockRoutes');
 
 const app = express();
 
@@ -37,7 +38,8 @@ app.get('/', (req,res)=> {
         endpoints: {
             users: '/api/users',
             ingredients: '/api/ingredients',
-            recipes: '/api/recipes'
+            recipes: '/api/recipes',
+            stock: '/api/stock'
         }
     });
 });
@@ -45,6 +47,7 @@ app.get('/', (req,res)=> {
 app.use('/api/users', userRoutes);
 app.use('/api/ingredients', ingredientRoutes);
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/stock', stockRoutes);
 
 // caso a rota nao seja encontrada
 app.use(/.*/, (req,res)=> {
@@ -66,7 +69,6 @@ async function startServer(){
         app.listen(PORT, ()=> {
             console.log(`Servidor rodando na porta ${PORT}`);
             console.log(`Acesse: http://localhost:${PORT}`);
-            console.log(`API Users na rota: http://localhost:${PORT}/api/users`);
         });
     } catch(error){
         console.error('Erro ao iniciar servidor', error);
