@@ -3,6 +3,8 @@ const router = express.Router();
 
 const stockController = require('../controllers/stockController');
 
+router.get('/:userId/expiring', stockController.getExpiringItems); 
+
 router.get('/:userId', stockController.getUserStock);                     
 router.post('/:userId', stockController.addToStock);                      
 router.put('/:userId/:ingredientId', stockController.updateStockItem);    

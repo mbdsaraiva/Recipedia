@@ -347,7 +347,51 @@ async function consumeIngredient(req, res) {
     }
 }
 
+// ingredientes vencendo (alertas)
+async function getExpiringItems(req, res) {
+    try {
+        const { userId } = req.params;
+        const { days = 3 } = req.query; // Padrão: 3 dias
 
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(userId) },
+            select: { id: true, nome: true }
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario nao encontrado' });
+        }
+
+        const hoje = new Date();
+        const limiteDias = new Date(hoje);
+        limiteDias.setDate(hoje.getDate() + parseInt(days));
+
+        const expiring = await prisma.userIngredient.findMany({
+            where: {
+                userId: parseInt(userId),
+                validade: {
+                    lte: limiteDias
+                }
+            },
+            include: {
+                ingredient: true
+            },
+            orderBy: {
+                validade: 'asc'
+            }
+        });
+
+        res.json({
+            user,
+            alertDays: parseInt(days),
+            expiringItems: expiring.length,
+            items: expiring
+        });
+    } catch (error) {
+        console.error('Erro ao buscar itens vencendo:', error);
+        res.status(500).json({ error: 'Erro ao buscar itens vencendo' });
+    }
+}
 
 module.exports = {
     getUserStock,
