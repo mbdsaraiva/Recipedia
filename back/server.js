@@ -22,7 +22,10 @@ const stockRoutes = require('./src/routes/stockRoutes');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Porta do frontend
+  credentials: true
+}));
 app.use(express.json());
 
 app.use((req,res,next)=> {
