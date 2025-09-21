@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-// importando o controller
 const userController = require ('../controllers/userController');
 
-// definicao das rotas
 router.get('/', userController.getAllUsers);
 router.get('/:id', userController.getUserById);
 router.post('/', userController.createUser);

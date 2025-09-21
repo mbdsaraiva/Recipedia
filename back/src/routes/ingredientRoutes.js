@@ -3,7 +3,6 @@ const router = express.Router();
 
 const ingredientController = require('../controllers/ingredientController');
 
-// rotas principais
 router.get('/search', ingredientController.searchIngredients);
 router.get('/stats', ingredientController.getIngredientStats);
 

@@ -88,14 +88,12 @@ async function createRecipe(req, res) {
     try {
         const { nome, instrucoes, categoria, autorId, ingredientes } = req.body;
 
-        // validação básica
         if (!nome || !instrucoes || !categoria || !autorId || !ingredientes || ingredientes.length === 0) {
             return res.status(400).json({
                 error: 'Nome, instruçoes, categoria, autor e pelo menos 1 ingrediente sao obrigatorios'
             });
         }
 
-        // verificar se autor existe
         const autor = await prisma.user.findUnique({
             where: { id: parseInt(autorId) }
         });
@@ -104,7 +102,6 @@ async function createRecipe(req, res) {
             return res.status(404).json({ error: 'Autor nao encontrado' });
         }
 
-        // verificar se todos os ingredientes existem
         const ingredientIds = ingredientes.map(ing => parseInt(ing.ingredientId, 10));
         const existingIngredients = await prisma.ingredient.findMany({
             where: { id: { in: ingredientIds } }
@@ -136,7 +133,6 @@ async function createRecipe(req, res) {
                 }
             });
 
-            // adicionar ingredientes
             const recipeIngredients = ingredientes.map(ing => ({
                 recipeId: newRecipe.id,
                 ingredientId: parseInt(ing.ingredientId),
@@ -150,7 +146,6 @@ async function createRecipe(req, res) {
             return newRecipe;
         });
 
-        // buscar receita criada com todos os dados
         const fullRecipe = await prisma.recipe.findUnique({
             where: { id: recipe.id },
             include: {
@@ -181,7 +176,6 @@ async function updateRecipe(req, res) {
         const { id } = req.params;
         const { nome, instrucoes, categoria, ingredientes } = req.body;
 
-        // verificar se receita existe
         const recipe = await prisma.recipe.findUnique({
             where: { id: parseInt(id) },
             include: {
@@ -195,7 +189,6 @@ async function updateRecipe(req, res) {
         }
 
         const updatedRecipe = await prisma.$transaction(async (tx) => {
-            // atualizar dados básicos da receita
             const updateData = {};
             if (nome) updateData.nome = nome.trim();
             if (instrucoes) updateData.instrucoes = instrucoes.trim();
@@ -206,7 +199,6 @@ async function updateRecipe(req, res) {
                 data: updateData
             });
 
-            // se ingredientes foram enviados, atualizar
             if (ingredientes && Array.isArray(ingredientes)) {
                 await tx.recipeIngredient.deleteMany({
                     where: { recipeId: parseInt(id) }

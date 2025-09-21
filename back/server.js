@@ -3,18 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 
-/* por fazer:
-    receitas
-    estoque pessoal
-    funcionalidades inteligentes
-    
-    */
-
-
-// conexcao com o db
 const {connectDatabase, disconnectDatabase} = require('./src/config/database');
 
-// importacao das rotas
 const userRoutes = require('./src/routes/userRoutes');
 const ingredientRoutes = require('./src/routes/ingredientRoutes');
 const recipeRoutes = require('./src/routes/recipeRoutes');
@@ -23,7 +13,7 @@ const stockRoutes = require('./src/routes/stockRoutes');
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Porta do frontend
+  origin: 'http://localhost:5173', 
   credentials: true
 }));
 app.use(express.json());
@@ -33,7 +23,6 @@ app.use((req,res,next)=> {
     next();
 })
 
-// rota de teste
 app.get('/', (req,res)=> {
     res.json({
         message: 'Api rodando',
@@ -60,9 +49,6 @@ app.use(/.*/, (req,res)=> {
   });
 });
 
-
-
-// para iniciar o servidor
 const PORT = process.env.PORT || 3000;
 
 async function startServer(){

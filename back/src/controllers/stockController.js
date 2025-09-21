@@ -137,7 +137,6 @@ async function addToStock(req, res) {
                 item: stockItem
             });
         } else {
-            // criar novo item no estoque
             stockItem = await prisma.userIngredient.create({
                 data: {
                     userId: parseInt(userId),
@@ -168,7 +167,6 @@ async function updateStockItem(req, res) {
         const { userId, ingredientId } = req.params;
         const { quantidade, validade } = req.body;
 
-        // verificar se item existe
         const existing = await prisma.userIngredient.findUnique({
             where: {
                 userId_ingredientId: {
@@ -185,7 +183,6 @@ async function updateStockItem(req, res) {
             return res.status(404).json({ error: 'Item não encontrado no estoque' });
         }
 
-        // dados para atualizar
         const updateData = {};
         if (quantidade !== undefined) {
             if (quantidade <= 0) {
@@ -302,7 +299,6 @@ async function consumeIngredient(req, res) {
         }
 
         if (novaQuantidade === 0) {
-            // se chegou a zero, remove do estoque
             await prisma.userIngredient.delete({
                 where: {
                     userId_ingredientId: {
@@ -318,7 +314,6 @@ async function consumeIngredient(req, res) {
                 remaining: 0
             });
         } else {
-            // Atualizando a quantidade
             const updated = await prisma.userIngredient.update({
                 where: {
                     userId_ingredientId: {
@@ -351,7 +346,7 @@ async function consumeIngredient(req, res) {
 async function getExpiringItems(req, res) {
     try {
         const { userId } = req.params;
-        const { days = 3 } = req.query; // Padrão: 3 dias
+        const { days = 3 } = req.query; // padrão: 3 dias
 
         const user = await prisma.user.findUnique({
             where: { id: parseInt(userId) },
