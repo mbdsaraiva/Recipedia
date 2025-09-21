@@ -23,17 +23,17 @@ export const apiUtils = {
 };
 
 export const userService = {
-  getAll: () => api.get('/users'),
-  getById: (id) => api.get(`/users/${id}`),
+  getAll: () => api.get('/api/users'),
+  getById: (id) => api.get(`/api/users/${id}`),
 };
 
 export const stockService = {
-  getUserStock: (userId) => api.get(`/stock/${userId}`),
+  getUserStock: (userId) => api.get(`/api/stock/${userId}`),
   getExpiring: (userId, days = 3) => api.get(`/stock/${userId}/expiring?days=${days}`),
 };
 
 export const recipeService = {
-  getAll: () => api.get('/recipes'),
+  getAll: () => api.get('/api/recipes'),
   getCanMake: (userId) => api.get(`/recipes/can-make/${userId}`),
 };
 
