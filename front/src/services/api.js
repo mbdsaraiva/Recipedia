@@ -38,7 +38,12 @@ export const stockService = {
 
 export const recipeService = {
   getAll: () => api.get('/api/recipes'),
+  getById: (id) => api.get(`/api/recipes/${id}`),
+  create: (data) => api.post('/api/recipes', data),
+  update: (id, data) => api.put(`/api/recipes/${id}`, data),
+  delete: (id) => api.delete(`/api/recipes/${id}`),
   getCanMake: (userId) => api.get(`/api/recipes/can-make/${userId}`),
+  getByCategory: (categoria) => api.get(`/api/recipes/category/${categoria}`),
 };
 
 export const ingredientService = {
@@ -50,5 +55,6 @@ export const ingredientService = {
   search: (query) => api.get(`/api/ingredients/search?q=${encodeURIComponent(query)}`),
   getStats: () => api.get('/api/ingredients/stats'),
 };
+
 
 export default api;

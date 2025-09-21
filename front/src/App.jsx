@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import MyStock from './pages/MyStock';
-// import Recipes from './pages/Recipes';
+import Recipes from './pages/Recipes';
 // import CanMake from './pages/CanMake';
 import { apiUtils } from './services/api';
 
@@ -84,12 +84,7 @@ function App() {
             />
             <Route
               path="/recipes"
-              element={
-                <div className="text-center py-12">
-                  <h2>Receitas (em desenvolvimento)</h2>
-                  <p className="text-gray-600">Esta página será implementada em breve.</p>
-                </div>
-              }
+              element={<Recipes currentUser={currentUser} />}
             />
             <Route
               path="/can-make"

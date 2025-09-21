@@ -105,7 +105,7 @@ async function createRecipe(req, res) {
         }
 
         // verificar se todos os ingredientes existem
-        const ingredientIds = ingredientes.map(ing => ing.ingredientId);
+        const ingredientIds = ingredientes.map(ing => parseInt(ing.ingredientId, 10));
         const existingIngredients = await prisma.ingredient.findMany({
             where: { id: { in: ingredientIds } }
         });
@@ -213,8 +213,7 @@ async function updateRecipe(req, res) {
                 });
 
                 if (ingredientes.length > 0) {
-                    const ingredientIds = ingredientes.map(ing => ing.ingredientId);
-                    const existingIngredients = await tx.ingredient.findMany({
+                    const ingredientIds = ingredientes.map(ing => parseInt(ing.ingredientId, 10)); const existingIngredients = await tx.ingredient.findMany({
                         where: { id: { in: ingredientIds } }
                     });
 
@@ -266,9 +265,9 @@ async function updateRecipe(req, res) {
 }
 
 // retornar receias por categoria
-async function getRecipesByCategory(req,res){
-    try{
-        const {categoria} = req.params;
+async function getRecipesByCategory(req, res) {
+    try {
+        const { categoria } = req.params;
 
         const recipes = await prisma.recipe.findMany({
             where: {
@@ -279,22 +278,22 @@ async function getRecipesByCategory(req,res){
             },
             include: {
                 autor: {
-                    select: {id: true, nome: true}
+                    select: { id: true, nome: true }
                 },
-                _count:{
-                    select: {ingredientes: true}
+                _count: {
+                    select: { ingredientes: true }
                 }
             },
-            orderBy: {nome: 'asc'}
+            orderBy: { nome: 'asc' }
         });
         res.json({
             categoria,
             total: recipes.length,
             recipes
         });
-    } catch(error){
+    } catch (error) {
         console.error('Erro ao buscar receitas por categoria:', error);
-        res.status(500).json({error: 'Erro ao buscar receitas'})
+        res.status(500).json({ error: 'Erro ao buscar receitas' })
     }
 }
 
@@ -333,8 +332,8 @@ async function getRecipesUserCanMake(req, res) {
         // filtrando receitas possiveis
         const canMakeRecipes = allRecipes.filter(recipe => {
             return recipe.ingredientes.every(recipeIng => {
-                const userHas = userStock.find(stock => 
-                    stock.ingredientId === recipeIng.ingredientId && 
+                const userHas = userStock.find(stock =>
+                    stock.ingredientId === recipeIng.ingredientId &&
                     stock.quantidade >= recipeIng.quantidade
                 );
                 return userHas !== undefined;
