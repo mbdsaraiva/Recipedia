@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
-// import MyStock from './pages/MyStock';
+import MyStock from './pages/MyStock';
 // import Recipes from './pages/Recipes';
 // import CanMake from './pages/CanMake';
 import { apiUtils } from './services/api';
@@ -77,6 +77,28 @@ function App() {
             <Route
               path="/"
               element={<Dashboard currentUser={currentUser} />}
+            />
+            <Route
+              path="/stock"
+              element={<MyStock currentUser={currentUser} />}
+            />
+            <Route
+              path="/recipes"
+              element={
+                <div className="text-center py-12">
+                  <h2>Receitas (em desenvolvimento)</h2>
+                  <p className="text-gray-600">Esta página será implementada em breve.</p>
+                </div>
+              }
+            />
+            <Route
+              path="/can-make"
+              element={
+                <div className="text-center py-12">
+                  <h2>Posso Fazer (em desenvolvimento)</h2>
+                  <p className="text-gray-600">Esta página será implementada em breve.</p>
+                </div>
+              }
             />
             <Route
               path="*"
