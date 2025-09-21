@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
 
+
 function Header({ currentUser }) {
   // useLocation nos dá informações sobre a URL atual
   const location = useLocation();
-  
+
   // Lista dos links de navegação
   const navigationLinks = [
     {
@@ -37,12 +38,12 @@ function Header({ currentUser }) {
   };
 
   return (
-    <header className="header">
+    <header className="gradient-header" style={{ padding: '1rem 0' }}>
       <div className="container flex justify-between items-center">
         {/* LOGO - Lado esquerdo */}
         <div className="flex items-center">
           <Link to="/" className="text-gradient" style={{
-            fontSize: '1.5rem', 
+            fontSize: '1.5rem',
             fontWeight: 'bold',
             textDecoration: 'none'
           }}>
@@ -64,7 +65,7 @@ function Header({ currentUser }) {
                 padding: '0.5rem 1rem',
                 borderRadius: '0.5rem',
                 textDecoration: 'none',
-                fontSize: '0.95rem'
+                fontSize: '0.95rem',
               }}
             >
               <span>{link.icon}</span>
@@ -82,7 +83,8 @@ function Header({ currentUser }) {
             padding: '0.5rem 1rem',
             background: '#f3f4f6',
             borderRadius: '2rem',
-            fontSize: '0.9rem'
+            fontSize: '0.9rem',
+            color: 'black'
           }}>
             <span>👤</span>
             <span>Olá, {currentUser?.nome || 'Usuário'}</span>

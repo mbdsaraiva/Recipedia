@@ -158,7 +158,7 @@ function Dashboard({ currentUser }) {
                 </p>
               )}
             </div>
-            <div style={{ fontSize: '2rem' }}>📦</div>
+            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📦</div>
           </div>
           <div style={{ marginTop: '1rem' }}>
             <Link to="/stock" className="btn-secondary" style={{ fontSize: '0.9rem' }}>
@@ -181,9 +181,7 @@ function Dashboard({ currentUser }) {
               </h3>
               <p className="text-gray-600">Vencendo em 7 dias</p>
             </div>
-            <div style={{ fontSize: '2rem' }}>
-              {getExpiringCount() > 0 ? '⚠️' : '✅'}
-            </div>
+            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>{getExpiringCount() > 0 ? '⚠️' : '✅'}</div>
           </div>
           <div style={{ marginTop: '1rem' }}>
             <Link to="/stock" className="btn-secondary" style={{ fontSize: '0.9rem' }}>
@@ -205,7 +203,7 @@ function Dashboard({ currentUser }) {
                   (dashboardData.userInfo?.receitas?.length || 0) : 0} total
               </p>
             </div>
-            <div style={{ fontSize: '2rem' }}>✨</div>
+            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>✨</div>
           </div>
           <div style={{ marginTop: '1rem' }}>
             <Link to="/can-make" className="btn-primary" style={{ fontSize: '0.9rem' }}>
@@ -420,8 +418,8 @@ function Dashboard({ currentUser }) {
               <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>
                 Modo de preparo:
               </h3>
-              <div style={{ 
-                whiteSpace: 'pre-line', 
+              <div style={{
+                whiteSpace: 'pre-line',
                 lineHeight: '1.6',
                 backgroundColor: '#f9fafb',
                 padding: '1rem',
