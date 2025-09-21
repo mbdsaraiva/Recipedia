@@ -7,6 +7,8 @@ import Recipes from './pages/Recipes';
 import CanMake from './pages/CanMake';
 import { apiUtils } from './services/api';
 
+// no futuro implementar um sistema de login
+
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -14,8 +16,7 @@ function App() {
 
   useEffect(() => {
     checkApiConnection();
-    // Por enquanto, vamos usar um usuário fixo
-    // TODO: Implementar sistema de login
+    
     setCurrentUser({ id: 1, nome: 'Usuário Demo' });
     setIsLoading(false);
   }, []);

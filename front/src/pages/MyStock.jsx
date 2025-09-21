@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { stockService, ingredientService } from '../services/api';
 
 function MyStock({ currentUser }) {
-  // Estados principais
+  // estados principais
   const [stockData, setStockData] = useState(null);
-  const [ingredients, setIngredients] = useState([]); // Para o formulário
+  const [ingredients, setIngredients] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Estados do formulário
+  // estados do formulário
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({
     ingredientId: '',
@@ -16,15 +16,14 @@ function MyStock({ currentUser }) {
     validade: ''
   });
   
-  // Estados de filtro
-  const [filter, setFilter] = useState('todos'); // todos, frescos, vencendo, vencidos
+  // estados de filtro
+  const [filter, setFilter] = useState('todos'); 
 
   useEffect(() => {
     loadStockData();
     loadIngredients();
   }, [currentUser]);
 
-  // Carregar dados do estoque
   const loadStockData = async () => {
     if (!currentUser?.id) return;
     
@@ -35,7 +34,6 @@ function MyStock({ currentUser }) {
     } catch (err) {
       console.error('Erro ao carregar estoque:', err);
       if (err.response?.status === 404) {
-        // Usuário não tem estoque ainda - estado inicial
         setStockData({
           user: currentUser,
           summary: { total: 0, vencidos: 0, vencendoHoje: 0, vencendoEm3Dias: 0, frescos: 0 },
@@ -49,7 +47,7 @@ function MyStock({ currentUser }) {
     }
   };
 
-  // Carregar lista de ingredientes para o formulário
+  // carregar lista de ingredientes para o formulario
   const loadIngredients = async () => {
     try {
       const response = await ingredientService.getAll();
@@ -59,7 +57,7 @@ function MyStock({ currentUser }) {
     }
   };
 
-  // Adicionar item ao estoque
+  // adicionar item ao estoque
   const handleAddItem = async (e) => {
     e.preventDefault();
     
@@ -75,7 +73,6 @@ function MyStock({ currentUser }) {
         validade: newItem.validade
       });
       
-      // Limpar formulário e recarregar dados
       setNewItem({ ingredientId: '', quantidade: '', validade: '' });
       setShowAddForm(false);
       await loadStockData();
@@ -86,7 +83,7 @@ function MyStock({ currentUser }) {
     }
   };
 
-  // Consumir ingrediente
+  // consumir ingrediente
   const handleConsume = async (ingredientId, currentQuantity) => {
     const quantityToConsume = prompt(`Quanto deseja consumir? (Disponível: ${currentQuantity})`);
     
@@ -107,7 +104,7 @@ function MyStock({ currentUser }) {
     }
   };
 
-  // Remover item do estoque
+  // remover item do estoque
   const handleRemove = async (ingredientId, ingredientName) => {
     if (!confirm(`Remover ${ingredientName} do estoque?`)) return;
 
@@ -120,7 +117,7 @@ function MyStock({ currentUser }) {
     }
   };
 
-  // Filtrar itens baseado no filtro selecionado
+  // filtrar itens baseado no filtro selecionado
   const getFilteredItems = () => {
     if (!stockData?.stock) return [];
     
@@ -132,19 +129,19 @@ function MyStock({ currentUser }) {
     }
   };
 
-  // Determinar cor do status
+  // determinar cor do status
   const getStatusColor = (item) => {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
     const validade = new Date(item.validade);
     
-    if (validade < hoje) return '#ef4444'; // Vencido - vermelho
+    if (validade < hoje) return '#ef4444'; 
     
     const em3Dias = new Date(hoje);
     em3Dias.setDate(hoje.getDate() + 3);
     
-    if (validade <= em3Dias) return '#f59e0b'; // Vencendo - amarelo
-    return '#10b981'; // Fresco - verde
+    if (validade <= em3Dias) return '#f59e0b'; 
+    return '#10b981'; 
   };
 
   const getStatusText = (item) => {

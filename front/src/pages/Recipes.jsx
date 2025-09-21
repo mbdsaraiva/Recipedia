@@ -2,27 +2,27 @@ import { useState, useEffect } from 'react';
 import { recipeService, ingredientService } from '../services/api';
 
 function Recipes({ currentUser }) {
-  // Estados principais
+  // estados principais
   const [recipes, setRecipes] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Estados para filtros
-  const [filter, setFilter] = useState('todas'); // todas, minhas, categoria específica
+  // estados para filtros
+  const [filter, setFilter] = useState('todas'); 
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Estados para modal de detalhes
+  // estados para modal de detalhes
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showRecipeModal, setShowRecipeModal] = useState(false);
   
-  // Estados para formulário de criação
+  // estados para formulário de criação
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newRecipe, setNewRecipe] = useState({
     nome: '',
     instrucoes: '',
     categoria: '',
-    ingredientes: [] // [{ingredientId: 1, quantidade: 2.5}]
+    ingredientes: [] 
   });
 
   useEffect(() => {
@@ -30,7 +30,7 @@ function Recipes({ currentUser }) {
     loadIngredients();
   }, []);
 
-  // Carregar receitas
+  // carregar receitas
   const loadRecipes = async () => {
     try {
       setError(null);
@@ -45,7 +45,7 @@ function Recipes({ currentUser }) {
     }
   };
 
-  // Carregar ingredientes para o formulário
+  // carregar ingredientes para o formulário
   const loadIngredients = async () => {
     try {
       const response = await ingredientService.getAll();
@@ -55,7 +55,7 @@ function Recipes({ currentUser }) {
     }
   };
 
-  // Criar nova receita
+  // criar nova receita
   const handleCreateRecipe = async (e) => {
     e.preventDefault();
     
@@ -73,7 +73,7 @@ function Recipes({ currentUser }) {
         ingredientes: newRecipe.ingredientes
       });
       
-      // Limpar formulário e recarregar
+      // limpar formulário e recarregar
       setNewRecipe({
         nome: '',
         instrucoes: '',
@@ -90,7 +90,7 @@ function Recipes({ currentUser }) {
     }
   };
 
-  // Adicionar ingrediente ao formulário
+  // adicionar ingrediente ao formulário
   const addIngredientToRecipe = () => {
     setNewRecipe({
       ...newRecipe,
@@ -98,13 +98,13 @@ function Recipes({ currentUser }) {
     });
   };
 
-  // Remover ingrediente do formulário
+  // remover ingrediente do formulário
   const removeIngredientFromRecipe = (index) => {
     const updatedIngredients = newRecipe.ingredientes.filter((_, i) => i !== index);
     setNewRecipe({ ...newRecipe, ingredientes: updatedIngredients });
   };
 
-  // Atualizar ingrediente no formulário
+  // atualizar ingrediente no formulário
   const updateRecipeIngredient = (index, field, value) => {
     const updatedIngredients = newRecipe.ingredientes.map((ing, i) => 
       i === index ? { ...ing, [field]: value } : ing
@@ -112,7 +112,6 @@ function Recipes({ currentUser }) {
     setNewRecipe({ ...newRecipe, ingredientes: updatedIngredients });
   };
 
-  // Deletar receita
   const handleDeleteRecipe = async (recipeId, recipeName) => {
     if (!confirm(`Deletar a receita "${recipeName}"?`)) return;
 
@@ -131,17 +130,14 @@ function Recipes({ currentUser }) {
   const getFilteredRecipes = () => {
     let filtered = recipes;
     
-    // Filtro por tipo
     if (filter === 'minhas') {
       filtered = filtered.filter(recipe => recipe.autorId === currentUser?.id);
     } else if (filter !== 'todas') {
-      // Filtro por categoria específica
       filtered = filtered.filter(recipe => 
         recipe.categoria?.toLowerCase() === filter.toLowerCase()
       );
     }
     
-    // Filtro por busca
     if (searchTerm) {
       filtered = filtered.filter(recipe =>
         recipe.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -152,16 +148,15 @@ function Recipes({ currentUser }) {
     return filtered;
   };
 
-  // Obter categorias únicas
+  // obter categorias únicas
   const getCategories = () => {
     const categories = [...new Set(recipes.map(recipe => recipe.categoria).filter(Boolean))];
     return categories;
   };
 
-  // Ver detalhes da receita
+  // ver detalhes da receita
   const viewRecipeDetails = async (recipe) => {
     try {
-      // Buscar detalhes completos da receita
       const response = await recipeService.getById(recipe.id);
       setSelectedRecipe(response.data);
       setShowRecipeModal(true);

@@ -2,10 +2,9 @@ import { Link, useLocation } from 'react-router-dom';
 
 
 function Header({ currentUser }) {
-  // useLocation nos dá informações sobre a URL atual
   const location = useLocation();
 
-  // Lista dos links de navegação
+  // lista dos links de navegação
   const navigationLinks = [
     {
       name: 'Dashboard',
@@ -29,7 +28,7 @@ function Header({ currentUser }) {
     }
   ];
 
-  // Função para verificar se um link está ativo (página atual)
+  // função para verificar se um link está ativo (página atual)
   const isActiveLink = (path) => {
     if (path === '/') {
       return location.pathname === '/';

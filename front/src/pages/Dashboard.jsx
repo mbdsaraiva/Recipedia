@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { stockService, recipeService, userService } from '../services/api';
 
 function Dashboard({ currentUser }) {
-  // Estados para armazenar dados da API
+  // estados para armazenar dados da API
   const [dashboardData, setDashboardData] = useState({
     stock: null,
     expiringItems: [],
@@ -86,7 +86,7 @@ function Dashboard({ currentUser }) {
   const getCanMakeCount = () => dashboardData.canMakeRecipes?.length || 0;
   const getVencidosCount = () => dashboardData.stock?.stock?.vencidos?.length || 0;
 
-  // Função para visualizar detalhes da receita
+  // função para visualizar detalhes da receita
   const viewRecipeDetails = async (recipe) => {
     try {
       const response = await recipeService.getById(recipe.id);

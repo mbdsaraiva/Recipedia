@@ -2,19 +2,19 @@ import { useState, useEffect } from 'react';
 import { recipeService, stockService } from '../services/api';
 
 function CanMake({ currentUser }) {
-  // Estados principais
+  // estados principais
   const [canMakeRecipes, setCanMakeRecipes] = useState([]);
   const [almostCanMake, setAlmostCanMake] = useState([]);
   const [userStock, setUserStock] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Estados para modal de fazer receita
+  // estados para modal de fazer receita
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [showMakeRecipeModal, setShowMakeRecipeModal] = useState(false);
   
-  // Estado para controlar abas
-  const [activeTab, setActiveTab] = useState('posso'); // posso, quase, todas
+  // estado para controlar abas
+  const [activeTab, setActiveTab] = useState('posso'); 
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -22,13 +22,13 @@ function CanMake({ currentUser }) {
     }
   }, [currentUser]);
 
-  // Carregar todos os dados necessários
+  // carregar todos os dados necessários
   const loadData = async () => {
     try {
       setError(null);
       setLoading(true);
 
-      // Buscar dados em paralelo
+      // buscar dados em paralelo
       const [canMakeResponse, stockResponse, allRecipesResponse] = await Promise.all([
         recipeService.getCanMake(currentUser.id),
         stockService.getUserStock(currentUser.id).catch(() => ({ data: null })),
@@ -42,7 +42,7 @@ function CanMake({ currentUser }) {
       setCanMakeRecipes(canMake);
       setUserStock(stock);
 
-      // Calcular receitas que "quase pode fazer" (faltam 1-2 ingredientes)
+      // calcular receitas que "quase pode fazer" (faltam 1-2 ingredientes)
       const almostRecipes = calculateAlmostCanMake(allRecipes, canMake, stock);
       setAlmostCanMake(almostRecipes);
 
@@ -57,7 +57,7 @@ function CanMake({ currentUser }) {
     }
   };
 
-  // Calcular receitas que quase pode fazer
+  // calcular receitas que quase pode fazer
   const calculateAlmostCanMake = (allRecipes, canMakeRecipes, stock) => {
     if (!stock?.stock?.todos) return [];
 
@@ -67,7 +67,7 @@ function CanMake({ currentUser }) {
     );
 
     return allRecipes
-      .filter(recipe => !canMakeIds.has(recipe.id)) // Excluir receitas que já pode fazer
+      .filter(recipe => !canMakeIds.has(recipe.id)) 
       .map(recipe => {
         const missing = [];
         const available = [];
@@ -95,18 +95,18 @@ function CanMake({ currentUser }) {
           missingCount: missing.length
         };
       })
-      .filter(recipe => recipe.missingCount > 0 && recipe.missingCount <= 3) // Máximo 3 ingredientes faltando
-      .sort((a, b) => a.missingCount - b.missingCount); // Ordenar por menos ingredientes faltando
+      .filter(recipe => recipe.missingCount > 0 && recipe.missingCount <= 3) 
+      .sort((a, b) => a.missingCount - b.missingCount); 
   };
 
-  // Fazer receita (consumir ingredientes)
+  // fazer receita (consumir ingredientes)
   const handleMakeRecipe = async (recipe) => {
     if (!confirm(`Fazer a receita "${recipe.nome}"? Isso vai consumir os ingredientes do seu estoque.`)) {
       return;
     }
 
     try {
-      // Consumir cada ingrediente necessário
+      // consumir cada ingrediente necessário
       for (const recipeIng of recipe.ingredientes || []) {
         await stockService.consumeIngredient(
           currentUser.id,
@@ -117,7 +117,7 @@ function CanMake({ currentUser }) {
 
       alert(`Receita "${recipe.nome}" feita com sucesso! Ingredientes consumidos do estoque.`);
       
-      // Recarregar dados
+      // recarregar dados
       await loadData();
       setShowMakeRecipeModal(false);
       
@@ -127,7 +127,7 @@ function CanMake({ currentUser }) {
     }
   };
 
-  // Ver detalhes da receita antes de fazer
+  // ver detalhes da receita antes de fazer
   const viewRecipeToMake = async (recipe) => {
     try {
       const response = await recipeService.getById(recipe.id);
