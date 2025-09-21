@@ -10,9 +10,11 @@ function Dashboard({ currentUser }) {
     canMakeRecipes: [],
     userInfo: null
   });
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [showRecipeModal, setShowRecipeModal] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -79,23 +81,21 @@ function Dashboard({ currentUser }) {
     }
   };
 
-  
-  const getTotalItems = () => {
+  const getTotalItems = () => dashboardData.stock?.stock?.todos?.length || 0;
+  const getExpiringCount = () => dashboardData.expiringItems?.length || 0;
+  const getCanMakeCount = () => dashboardData.canMakeRecipes?.length || 0;
+  const getVencidosCount = () => dashboardData.stock?.stock?.vencidos?.length || 0;
 
-    return dashboardData.stock?.stock?.todos?.length || 0;
-  };
-
-  const getExpiringCount = () => {
-    return dashboardData.expiringItems?.length || 0;
-  };
-
-  const getCanMakeCount = () => {
-    return dashboardData.canMakeRecipes?.length || 0;
-  };
-
-  const getVencidosCount = () => {
-    // itens já vencidos no estoque
-    return dashboardData.stock?.stock?.vencidos?.length || 0;
+  // Função para visualizar detalhes da receita
+  const viewRecipeDetails = async (recipe) => {
+    try {
+      const response = await recipeService.getById(recipe.id);
+      setSelectedRecipe(response.data);
+      setShowRecipeModal(true);
+    } catch (err) {
+      console.error('Erro ao carregar receita:', err);
+      alert('Erro ao carregar detalhes da receita');
+    }
   };
 
   // renderizar estado de loading
@@ -103,11 +103,11 @@ function Dashboard({ currentUser }) {
     return (
       <div className="text-center py-12">
         <div className="animate-spin" style={{
-          width: '3rem', 
-          height: '3rem', 
-          border: '2px solid #e5e7eb', 
-          borderTop: '2px solid #3b82f6', 
-          borderRadius: '50%', 
+          width: '3rem',
+          height: '3rem',
+          border: '2px solid #e5e7eb',
+          borderTop: '2px solid #3b82f6',
+          borderRadius: '50%',
           margin: '0 auto 1rem'
         }}></div>
         <p className="text-gray-600">Carregando seus dados...</p>
@@ -171,9 +171,9 @@ function Dashboard({ currentUser }) {
         <div className="card">
           <div className="flex justify-between items-center">
             <div>
-              <h3 style={{ 
-                fontSize: '2rem', 
-                fontWeight: '700', 
+              <h3 style={{
+                fontSize: '2rem',
+                fontWeight: '700',
                 marginBottom: '0.25rem',
                 color: getExpiringCount() > 0 ? '#f59e0b' : '#10b981'
               }}>
@@ -201,7 +201,7 @@ function Dashboard({ currentUser }) {
               </h3>
               <p className="text-gray-600">Receitas Possíveis</p>
               <p style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '0.25rem' }}>
-                de {dashboardData.canMakeRecipes?.length >= 0 ? 
+                de {dashboardData.canMakeRecipes?.length >= 0 ?
                   (dashboardData.userInfo?.receitas?.length || 0) : 0} total
               </p>
             </div>
@@ -223,11 +223,11 @@ function Dashboard({ currentUser }) {
           </h2>
           <div style={{ display: 'grid', gap: '0.75rem' }}>
             {dashboardData.stock?.stock?.vencidos?.slice(0, 5).map((item, index) => (
-              <div 
+              <div
                 key={index}
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '0.75rem',
                   background: '#fee2e2',
@@ -264,11 +264,11 @@ function Dashboard({ currentUser }) {
           </h2>
           <div style={{ display: 'grid', gap: '0.75rem' }}>
             {dashboardData.expiringItems.slice(0, 5).map((item, index) => (
-              <div 
+              <div
                 key={index}
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '0.75rem',
                   background: '#fef3c7',
@@ -303,7 +303,7 @@ function Dashboard({ currentUser }) {
         <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>
           🍳 Receitas que Você Pode Fazer
         </h2>
-        
+
         {getCanMakeCount() === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600 mb-4">
@@ -316,11 +316,11 @@ function Dashboard({ currentUser }) {
         ) : (
           <div style={{ display: 'grid', gap: '1rem' }}>
             {dashboardData.canMakeRecipes.slice(0, 3).map((recipe) => (
-              <div 
+              <div
                 key={recipe.id}
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
                   padding: '1rem',
                   border: '1px solid #e5e7eb',
@@ -336,17 +336,17 @@ function Dashboard({ currentUser }) {
                   </p>
                 </div>
                 <div>
-                  <Link 
-                    to={`/recipes/${recipe.id}`} 
+                  <button
+                    onClick={() => viewRecipeDetails(recipe)}
                     className="btn-primary"
                     style={{ fontSize: '0.875rem' }}
                   >
                     Ver Receita
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}
-            
+
             {getCanMakeCount() > 3 && (
               <div style={{ textAlign: 'center', marginTop: '1rem' }}>
                 <Link to="/can-make" className="btn-secondary">
@@ -357,6 +357,92 @@ function Dashboard({ currentUser }) {
           </div>
         )}
       </div>
+
+      {/* MODAL DE RECEITA */}
+      {showRecipeModal && selectedRecipe && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '2rem'
+        }}>
+          <div className="card" style={{
+            maxWidth: '600px',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            width: '100%'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>
+                {selectedRecipe.nome}
+              </h2>
+              <button
+                onClick={() => setShowRecipeModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  color: '#6b7280'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <p style={{ color: '#6b7280', textTransform: 'capitalize' }}>
+                {selectedRecipe.categoria} • Por {selectedRecipe.autor?.nome}
+              </p>
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                Ingredientes:
+              </h3>
+              <ul style={{ listStyle: 'disc', paddingLeft: '1.5rem' }}>
+                {selectedRecipe.ingredientes?.map((ing, index) => (
+                  <li key={index} style={{ marginBottom: '0.25rem' }}>
+                    {ing.quantidade} {ing.ingredient?.unidade} de {ing.ingredient?.nome}
+                  </li>
+                )) || <li>Nenhum ingrediente encontrado</li>}
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                Modo de preparo:
+              </h3>
+              <div style={{ 
+                whiteSpace: 'pre-line', 
+                lineHeight: '1.6',
+                backgroundColor: '#f9fafb',
+                padding: '1rem',
+                borderRadius: '0.5rem',
+                border: '1px solid #e5e7eb'
+              }}>
+                {selectedRecipe.instrucoes}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowRecipeModal(false)}
+              className="btn-primary"
+              style={{ width: '100%' }}
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
