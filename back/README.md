@@ -249,7 +249,3 @@ npx prisma migrate dev --name descriptive_name
 - Connection pooling for database connections 🏊‍♂️
 
 ---
-
-<div align="center">
-  Built with ❤️ for efficient kitchen management
-</div>
