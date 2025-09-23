@@ -104,18 +104,6 @@ The system analyzes your ingredient stock and automatically suggests recipes you
 - `GET/POST/PUT/DELETE /api/stock/:userId` - 📦 Stock management
 - `GET /api/recipes/can-make/:userId` - 🎯 Smart recipe suggestions
 
-## 🤝 Contributing
-
-1. Fork the repository 🍴
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request 🚀
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - Built as a learning project to demonstrate full-stack development skills 🎓
@@ -127,4 +115,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
   Made with ❤️ for better kitchen management
 </div>
+
 
