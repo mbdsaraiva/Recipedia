@@ -54,7 +54,7 @@ A full-stack web application for intelligent management of kitchen ingredients a
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/recipedia.git
+git clone https://github.com/mbdsaraiva/recipedia.git
 cd recipedia
 ```
 
@@ -111,6 +111,7 @@ The system analyzes your ingredient stock and automatically suggests recipes you
 - Uses modern web development practices and patterns ⚡
 
 ---
+
 
 
 
