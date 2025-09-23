@@ -112,8 +112,5 @@ The system analyzes your ingredient stock and automatically suggests recipes you
 
 ---
 
-<div align="center">
-  Made with ❤️ for better kitchen management
-</div>
 
 
