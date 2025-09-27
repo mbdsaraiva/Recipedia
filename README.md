@@ -104,13 +104,8 @@ The system analyzes your ingredient stock and automatically suggests recipes you
 - `GET/POST/PUT/DELETE /api/stock/:userId` - 📦 Stock management
 - `GET /api/recipes/can-make/:userId` - 🎯 Smart recipe suggestions
 
-## 🙏 Acknowledgments
-
-- Built as a learning project to demonstrate full-stack development skills 🎓
-- Inspired by the need for better kitchen inventory management 🏠
-- Uses modern web development practices and patterns ⚡
-
 ---
+
 
 
 
