@@ -20,33 +20,6 @@ RESTful API built with Node.js, Express, and Prisma ORM for the Recipedia ingred
 - **CORS** - Cross-origin resource sharing 🔄
 - **dotenv** - Environment configuration ⚙️
 
-## 📁 Project Structure
-
-```
-backend/
-├── 📂 src/
-│   ├── 🎮 controllers/           # Request handlers
-│   │   ├── userController.js
-│   │   ├── ingredientController.js
-│   │   ├── recipeController.js
-│   │   └── stockController.js
-│   ├── 🛣️ routes/               # Route definitions
-│   │   ├── userRoutes.js
-│   │   ├── ingredientRoutes.js
-│   │   ├── recipeRoutes.js
-│   │   └── stockRoutes.js
-│   ├── 🔧 services/            # Business logic
-│   └── ⚙️ config/              # Configuration files
-│       └── database.js
-├── 🗃️ prisma/
-│   ├── schema.prisma        # Database schema
-│   └── migrations/          # Database migrations
-├── 🤖 generated/               # Prisma generated client
-├── 🚀 server.js               # Application entry point
-├── 📦 package.json
-└── 🔐 .env                    # Environment variables
-```
-
 ## 🗃️ Database Schema
 
 ### 📊 Tables
@@ -232,20 +205,5 @@ Common HTTP status codes:
 - `404` - Not Found 🔍
 - `409` - Conflict ⚠️
 - `500` - Internal Server Error 💥
-
-## 🗃️ Database Migrations
-
-Migrations are managed through Prisma and stored in `prisma/migrations/`. To create a new migration:
-
-```bash
-npx prisma migrate dev --name descriptive_name
-```
-
-## ⚡ Performance Considerations
-
-- Database queries are optimized with appropriate indexes 📈
-- Bulk operations for recipe ingredient management 🔄
-- Efficient relationship loading with Prisma includes 🔗
-- Connection pooling for database connections 🏊‍♂️
 
 ---
