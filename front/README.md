@@ -246,24 +246,6 @@ npm run build
 
 This creates an optimized build in the `dist/` directory.
 
-### 🚀 Deployment Options
-- **Vercel**: Automatic deployments from Git 🔄
-- **Netlify**: Static site hosting with CI/CD ⚡
-- **GitHub Pages**: Free hosting for static sites 🆓
-- **Traditional hosting**: Any web server serving static files 🌐
-
-### 🔐 Environment Variables
-For production deployments, configure:
-- `VITE_API_URL`: Backend API URL 🌐
-- `VITE_APP_NAME`: Application name 🏷️
-
-## 🌐 Browser Support
-
-- **Chrome** 90+ 🟢
-- **Firefox** 88+ 🟠
-- **Safari** 14+ 🔵
-- **Edge** 90+ 🔷
-
 ## 📋 Development Guidelines
 
 ### 📝 Code Style
