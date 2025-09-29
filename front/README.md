@@ -21,31 +21,6 @@ Modern React application for ingredient inventory management and recipe discover
 - **CSS3** - Custom styling with modern features 🎨
 - **Date-fns** - Date manipulation utilities 📅
 
-## 📁 Project Structure
-
-```
-frontend/
-├── 📂 src/
-│   ├── 🧩 components/          # Reusable UI components
-│   │   └── Header.jsx      # Navigation header
-│   ├── 📄 pages/              # Main application pages
-│   │   ├── Dashboard.jsx   # Home dashboard 📊
-│   │   ├── MyStock.jsx     # Inventory management 📦
-│   │   ├── Recipes.jsx     # Recipe management 📋
-│   │   └── CanMake.jsx     # Smart recipe suggestions 🎯
-│   ├── 🌐 services/           # API communication layer
-│   │   └── api.js         # Axios configuration and services
-│   ├── 🎣 hooks/             # Custom React hooks (if any)
-│   ├── 🔧 utils/             # Utility functions
-│   ├── 🏠 App.jsx            # Main application component
-│   ├── 🚀 main.jsx           # Application entry point
-│   └── 🎨 index.css          # Global styles
-├── 📂 public/                # Static assets
-├── 📝 index.html            # HTML template
-├── 📦 package.json
-└── ⚙️ vite.config.js        # Vite configuration
-```
-
 ## ✨ Features
 
 ### 📊 Dashboard
